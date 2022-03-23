@@ -4,10 +4,13 @@ body {
 
 .p-4{
     padding: 1rem;
+    background-color:rgb(71, 80, 76);
+    color: rgb(235, 235, 173);
 }
 
 nav a {
-    padding: .5;
+    padding: 2;
+    
 }
 
 .border-1{
@@ -25,4 +28,10 @@ nav a {
 
 .form div>button {
     padding:5px;
+}
+
+.form .form-error{
+    font-size: .75rem;
+    color:red;
+    font-weight: bold;
 }

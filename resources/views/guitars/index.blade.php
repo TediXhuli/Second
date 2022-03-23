@@ -14,6 +14,15 @@
                         <li>
                             Made by : {{ $guitar['brand'] }}
                         </li>
+
+                        <li>
+                           Year made : {{ $guitar['year_made'] }}
+                        </li>
+                        <form  method="DELETE" action="{{route('guitars.destroy',['guitar'=>$guitar->id])}}">
+                        <button type="submit">
+                            delete
+                         </button>
+                        </form>
                     </ul>
                 </div>
             @endforeach

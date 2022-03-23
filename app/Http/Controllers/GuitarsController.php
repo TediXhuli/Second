@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Guitar;
+use Symfony\Contracts\Service\Attribute\Required;
 
 class GuitarsController extends Controller
 {
@@ -12,10 +13,10 @@ class GuitarsController extends Controller
     private static function getData()
     {
         return [
-            ['id' => 1, 'name' => 'American Standart Strat', 'brand' => 'fender'],
-            ['id' => 2, 'name' => 'Starla S2', 'brand' => 'PRS'],
-            ['id' => 3, 'name' => 'Explorer', 'brand' => 'Gibson'],
-            ['id' => 4, 'name' => 'Talman', 'brand' => 'Ibanez'],
+            ['id' => 1, 'name' => 'American Standart Strat', 'brand' => 'fender', 'year_made' => '2015'],
+            ['id' => 2, 'name' => 'Starla S2', 'brand' => 'PRS', 'year_made' => '2012'],
+            ['id' => 3, 'name' => 'Explorer', 'brand' => 'Gibson', 'year_made' => '2014'],
+            ['id' => 4, 'name' => 'Talman', 'brand' => 'Ibanez', 'year_made' => '2011'],
         ];
     }
     /**
@@ -28,7 +29,7 @@ class GuitarsController extends Controller
         //GET
 
         return view('guitars.index', [
-            'guitars' => self::getData(),
+            'guitars' => Guitar::all(),
             'userInput' => '<script>alert("hello")</script>'
         ]);
     }
@@ -53,13 +54,23 @@ class GuitarsController extends Controller
     public function store(Request $request)
     {
         //SHOW
+
+        $request->validate([
+            'guitar-name' => 'required',
+            'brand' => 'required',
+            'year' => ['required', 'integer']
+
+        ]);
+
         $guitar = new Guitar();
 
         $guitar->name = $request->input('guitar-name');
         $guitar->brand = $request->input('brand');
-        $guitar->year_name = $request->input('year');
+        $guitar->year_made = $request->input('year');
 
         $guitar->save();
+
+        return redirect()->route('guitars.index');
     }
 
     /**
@@ -71,16 +82,9 @@ class GuitarsController extends Controller
     public function show($guitar)
     {
         //GET
-        $guitars = self::getData();
-
-        $index = array_search($guitar, array_column($guitars, 'id'));
-
-        if ($index === false) {
-            abort(404);
-        }
 
         return view('guitars.show', [
-            'guitar' => $guitars[$index]
+            'guitar' => Guitar::findOrFail($guitar) //clean code (it's an alternative to the if(error) but in this case it will fail automatically and return a 404 if it cant find a record )
         ]);
     }
 
@@ -90,9 +94,12 @@ class GuitarsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($guitar)
     {
-        //
+        //GET
+        return view('guitars.edit', [
+            'guitar' => Guitar::findOrFail($guitar)
+        ]);
     }
 
     /**
@@ -102,9 +109,25 @@ class GuitarsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $guitar)
     {
-        //
+        //POST
+        $request->validate([
+            'guitar-name' => 'required',
+            'brand' => 'required',
+            'year' => ['required', 'integer']
+
+        ]);
+
+        $record = Guitar::findOrFail($guitar); // we will fetch the data from the database
+
+        $record->name = $request->input('guitar-name');
+        $record->brand = $request->input('brand');
+        $record->year_made = $request->input('year');
+
+        $record->save();
+
+        return redirect()->route('guitars.show', $guitar);
     }
 
     /**
@@ -115,6 +138,6 @@ class GuitarsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        var_dump($id);
     }
 }
