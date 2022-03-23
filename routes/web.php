@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GuitarsController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,6 +18,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name('home.index');
 Route::get('/about', [HomeController::class, 'about'])->name('home.about');
 Route::get('/contact', [HomeController::class, 'contact'])->name('home.contact');
+
+Route::resource('guitars',GuitarsController::class);
 
 Route::get('/store/{category?}/{item?}', function ($category = null, $item = null) {
 
